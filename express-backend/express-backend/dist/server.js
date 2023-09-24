@@ -5,8 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const crypto_1 = __importDefault(require("crypto"));
+const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
 const PORT = 3000;
+app.use((0, cors_1.default)({
+    origin: 'http://localhost:5173'
+}));
 app.get('/', (req, res) => {
     res.send('This is a server for an application using Express.js and TypeScript!!!!');
 });
@@ -29,7 +33,7 @@ const tests = quotes.map((quoteObj) => {
     return {
         id: generateRandomID(),
         name: quoteObj.name,
-        executionTime: Math.random() * 5,
+        executionTime: Math.random() * 4000,
         quote: quoteObj.quote
     };
 });

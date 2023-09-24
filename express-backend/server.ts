@@ -1,7 +1,13 @@
 import express from 'express';
 import crypto from 'crypto';
+import cors from 'cors';
 const app = express();
 const PORT = 3000;
+
+app.use(cors({
+  origin: 'http://localhost:5173'
+}))
+
 
 app.get('/', (req, res) => {
   res.send('This is a server for an application using Express.js and TypeScript!!!!');
@@ -28,7 +34,7 @@ const tests = quotes.map((quoteObj) => {
   return {
     id: generateRandomID(),
     name: quoteObj.name,
-    executionTime: Math.random() * 5, // Random time between 0 to 5 seconds.
+    executionTime: Math.random() * 4000, 
     quote: quoteObj.quote
   }
 })
