@@ -59,7 +59,7 @@ function App() {
     // Set tests to 'Running' state
     const updatedTests: Test[] = tests.map((test) => ({
       ...test,
-      status: 'Running',``
+      status: 'Running',
     }))
 
     setTests(updatedTests);
