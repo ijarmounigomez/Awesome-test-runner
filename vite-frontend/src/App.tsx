@@ -11,6 +11,10 @@ type Test = {
   status?: 'Running' | 'Succeeded' | 'Failed' | 'Pending'; // optional attribute!
 };
 
+function randomisedResult() {
+  return Math.random() < 0.5 ? 'Succeeded' : 'Failed';
+}
+
 // The App function is the main component. Defines the UI and behavior of the app.
 function App() {
   const [tests, setTests] = useState<Test[]>([]);
@@ -23,7 +27,7 @@ function App() {
     }));
     setTests(fetchedTests);
     });
-  }, []);
+  }, []); // Based on a state change, you can fill it in.
 
   // Run tests
   function runTest(testId: string) {
@@ -41,15 +45,41 @@ function App() {
 
       // set Timeout
       setTimeout(() => {
-        const randomResult = Math.random() < 0.5 ? 'Succeeded' : 'Failed';
 
         setTests((previousTests) =>
           previousTests.map(test =>
-            test.id === testId ? {...test, status: randomResult} : test
+            test.id === testId ? {...test, status: randomisedResult()} : test
           )
         )
       }, testToRun.executionTime);
     }
+  }
+
+  function runAllTests() {
+    // Set tests to 'Running' state
+    const updatedTests: Test[] = tests.map((test) => ({
+      ...test,
+      status: 'Running',``
+    }))
+
+    setTests(updatedTests);
+
+    const testPromises: Promise<Test>[] = tests.map((test) => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            ...test,
+            status: randomisedResult()
+          })           
+        }, test.executionTime)
+
+      })
+    })
+
+    Promise.all(testPromises).then((updatedTests) => {
+      setTests(updatedTests);
+    });
+  
   }
 
   return (
@@ -62,8 +92,9 @@ function App() {
           <button onClick={() => runTest(test.id)}>Run Test</button>
         </div>
       ))}
+      <button onClick={() => runAllTests()}>Run all tests</button>
     </div>
     );
-    }
+}
   
 export default App;
