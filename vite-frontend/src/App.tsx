@@ -65,6 +65,7 @@ function App() {
     setTests(updatedTests);
 
     const testPromises: Promise<Test>[] = tests.map((test) => {
+      // test comment
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve({
