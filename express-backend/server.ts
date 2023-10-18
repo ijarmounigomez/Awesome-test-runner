@@ -9,11 +9,11 @@ app.use(cors({
 }))
 
 
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.send('This is a server for an application using Express.js and TypeScript!!!!');
 })
 
-app.get('/tests', (req, res) => {
+app.get('/tests', (_, res) => {
   res.send(tests);
 })
 
