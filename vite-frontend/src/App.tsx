@@ -30,6 +30,9 @@ function App() {
   // Run tests
   function runTest(testId: string) {
     console.log(testId);
+
+
+    axios.get(`http://localhost:3000/tests/result/${testId}`).then((res) => {console.log(res)})
     // What is the test to run?
     // Compare the id of the test passed, to the testId (prop)
     // const testToRun = tests.find((test) => test.id === testId);

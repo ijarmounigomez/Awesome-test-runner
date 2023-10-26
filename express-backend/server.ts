@@ -36,47 +36,52 @@ function randomisedResult(): Promise<'Succeeded' | 'Failed'> {
   const testResult = Math.random() < 0.5 ? 'Succeeded' : 'Failed';
   try {
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _) => {
       setTimeout(() => {
         if (testResult === 'Succeeded') {
           resolve(testResult);
         } else if (testResult === 'Failed') {
-          reject(testResult);
+          resolve(testResult);
         }
       }, ms);
     })
   } catch (testError) {
     console.error({ testError }, 'An error occured');
 
-    return Promise.reject('Failed');
+    return Promise.resolve('Failed');
   }
 }
 
-const tests = quotes.map((quoteObj) => {
-  return {
-    id: generateRandomID(),
-    name: quoteObj.name,
-    quote: quoteObj.quote
-  }
-})
-
 const testMap = new Map();
-quotes.forEach((quoteObj) => {
+
+const tests = quotes.map((quoteObj) => {
   const id = generateRandomID();
-  testMap.set(id, {
+
+    testMap.set(id, {
     id,
     name: quoteObj.name,
     testResult: randomisedResult,
     quote: quoteObj.quote,
   });
-});
+
+  return {
+    id, 
+    name: quoteObj.name,
+    quote: quoteObj.quote
+  }
+})
+
+
 
 app.get('/tests/result/:id', async (req, res) => {
   const id = req.params.id;
   const test = testMap.get(id);
+console.log(id)
+
   if (test) {
     try {
       const result = await test.testResult();
+
       res.send({ result });
     } catch (error) {
       res.status(500).send('Test Failed');
