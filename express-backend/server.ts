@@ -30,14 +30,61 @@ const quotes = [
   { name: "Alan J. Perlis", quote: "A language that doesn't affect the way you think about programming is not worth knowing." }
 ];
 
+
+function randomisedResult(): Promise<'Succeeded' | 'Failed'> {
+  const ms = Math.random() * 4000;
+  const testResult = Math.random() < 0.5 ? 'Succeeded' : 'Failed';
+  try {
+
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (testResult === 'Succeeded') {
+          resolve(testResult);
+        } else if (testResult === 'Failed') {
+          reject(testResult);
+        }
+      }, ms);
+    })
+  } catch (testError) {
+    console.error({ testError }, 'An error occured');
+
+    return Promise.reject('Failed');
+  }
+}
+
 const tests = quotes.map((quoteObj) => {
   return {
     id: generateRandomID(),
     name: quoteObj.name,
-    executionTime: Math.random() * 4000, 
     quote: quoteObj.quote
   }
 })
+
+const testMap = new Map();
+quotes.forEach((quoteObj) => {
+  const id = generateRandomID();
+  testMap.set(id, {
+    id,
+    name: quoteObj.name,
+    testResult: randomisedResult,
+    quote: quoteObj.quote,
+  });
+});
+
+app.get('/tests/result/:id', async (req, res) => {
+  const id = req.params.id;
+  const test = testMap.get(id);
+  if (test) {
+    try {
+      const result = await test.testResult();
+      res.send({ result });
+    } catch (error) {
+      res.status(500).send('Test Failed');
+    }
+  } else {
+    res.status(404).send('Test Not Found');
+  }
+});
 
 function generateRandomID() {
   return crypto.randomUUID();
