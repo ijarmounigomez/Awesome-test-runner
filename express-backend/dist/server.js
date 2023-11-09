@@ -67,7 +67,6 @@ const tests = quotes.map((quoteObj) => {
 app.get('/tests/result/:id', async (req, res) => {
     const id = req.params.id;
     const test = testMap.get(id);
-    console.log(id);
     if (test) {
         try {
             const result = await test.testResult();

@@ -57,7 +57,7 @@ const testMap = new Map();
 const tests = quotes.map((quoteObj) => {
   const id = generateRandomID();
 
-    testMap.set(id, {
+  testMap.set(id, {
     id,
     name: quoteObj.name,
     testResult: randomisedResult,
@@ -65,7 +65,7 @@ const tests = quotes.map((quoteObj) => {
   });
 
   return {
-    id, 
+    id,
     name: quoteObj.name,
     quote: quoteObj.quote
   }
@@ -76,7 +76,7 @@ const tests = quotes.map((quoteObj) => {
 app.get('/tests/result/:id', async (req, res) => {
   const id = req.params.id;
   const test = testMap.get(id);
-console.log(id)
+
 
   if (test) {
     try {
