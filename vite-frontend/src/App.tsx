@@ -1,9 +1,10 @@
 // App.tsx
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import axios from 'axios';
 import { Test } from './types';
 import { useAppContext } from './AppProvider';
 import { Overview } from './components/TestOverview/Overview';
+import { addTests } from './store/actions';
 
 
 
@@ -18,7 +19,7 @@ function App() {
         status: 'Pending'
       }));
 
-      dispatch({ type: 'UPDATE_ALL_TESTS', payload: fetchedTests });
+      dispatch(addTests(fetchedTests));
     });
   }, []); // Based on a state change, you can fill it in.
 
