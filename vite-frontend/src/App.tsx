@@ -11,9 +11,6 @@ type Test = {
   status?: 'Running' | 'Succeeded' | 'Failed' | 'Pending'; // optional attribute!
 };
 
-function randomisedResult() {
-  return Math.random() < 0.5 ? 'Succeeded' : 'Failed';
-}
 
 // The App function is the main component. Defines the UI and behavior of the app.
 function App() {
@@ -25,60 +22,67 @@ function App() {
       ...test,
       status: 'Pending'
     }));
+      console.log(response)
     setTests(fetchedTests);
     });
   }, []); // Based on a state change, you can fill it in.
 
   // Run tests
   function runTest(testId: string) {
+    console.log(testId);
+
+
+    axios.get(`http://localhost:3000/tests/result/${testId}`).then((res) => {console.log(res)})
     // What is the test to run?
     // Compare the id of the test passed, to the testId (prop)
-    const testToRun = tests.find((test) => test.id === testId);
-
-    if (testToRun) {
-      // If the test to run is found, change the status to 'Running', while in progress
-      setTests((previousTests) =>
-        previousTests.map((test) =>
-          test.id === testId ? {...test, status: 'Running'} : test
-        )
-      );
-
-      // set Timeout
-      setTimeout(() => {
-
-        setTests((previousTests) =>
-          previousTests.map(test =>
-            test.id === testId ? {...test, status: randomisedResult()} : test
-          )
-        )
-      }, testToRun.executionTime);
-    }
+    // const testToRun = tests.find((test) => test.id === testId);
+    //
+    // if (testToRun) {
+    //   // If the test to run is found, change the status to 'Running', while in progress
+    //   setTests((previousTests) =>
+    //     previousTests.map((test) =>
+    //       test.id === testId ? {...test, status: 'Running'} : test
+    //     )
+    //   );
+    //
+    //   // set Timeout
+    //   setTimeout(() => {
+    //
+    //     setTests((previousTests) =>
+    //       previousTests.map(test =>
+    //         test.id === testId ? {...test, status: randomisedResult()} : test
+    //       )
+    //     )
+    //   }, testToRun.executionTime);
+    // }
   }
 
   function runAllTests() {
-    // Set tests to 'Running' state
-    const updatedTests: Test[] = tests.map((test) => ({
-      ...test,
-      status: 'Running',
-    }))
-
-    setTests(updatedTests);
-
-    const testPromises: Promise<Test>[] = tests.map((test) => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            ...test,
-            status: randomisedResult()
-          })           
-        }, test.executionTime)
-
-      })
-    })
-
-    Promise.all(testPromises).then((updatedTests) => {
-      setTests(updatedTests);
-    });
+    //
+    // // Set tests to 'Running' state
+    // const updatedTests: Test[] = tests.map((test) => ({
+    //   ...test,
+    //   status: 'Running',
+    // }))
+    //
+    // setTests(updatedTests);
+    //
+    // const testPromises: Promise<Test>[] = tests.map((test) => {
+    //   // test comment
+    //   return new Promise((resolve) => {
+    //     setTimeout(() => {
+    //       resolve({
+    //         ...test,
+    //         status: randomisedResult()
+    //       })           
+    //     }, test.executionTime)
+    //
+    //   })
+    // })
+    //
+    // testPromises .then((updatedTests) => {
+    //   setTests(updatedTests);
+    // });
   
   }
 

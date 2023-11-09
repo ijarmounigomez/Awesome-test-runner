@@ -9,11 +9,11 @@ app.use(cors({
 }))
 
 
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.send('This is a server for an application using Express.js and TypeScript!!!!');
 })
 
-app.get('/tests', (req, res) => {
+app.get('/tests', (_, res) => {
   res.send(tests);
 })
 
@@ -30,14 +30,66 @@ const quotes = [
   { name: "Alan J. Perlis", quote: "A language that doesn't affect the way you think about programming is not worth knowing." }
 ];
 
+
+function randomisedResult(): Promise<'Succeeded' | 'Failed'> {
+  const ms = Math.random() * 4000;
+  const testResult = Math.random() < 0.5 ? 'Succeeded' : 'Failed';
+  try {
+
+    return new Promise((resolve, _) => {
+      setTimeout(() => {
+        if (testResult === 'Succeeded') {
+          resolve(testResult);
+        } else if (testResult === 'Failed') {
+          resolve(testResult);
+        }
+      }, ms);
+    })
+  } catch (testError) {
+    console.error({ testError }, 'An error occured');
+
+    return Promise.resolve('Failed');
+  }
+}
+
+const testMap = new Map();
+
 const tests = quotes.map((quoteObj) => {
-  return {
-    id: generateRandomID(),
+  const id = generateRandomID();
+
+    testMap.set(id, {
+    id,
     name: quoteObj.name,
-    executionTime: Math.random() * 4000, 
+    testResult: randomisedResult,
+    quote: quoteObj.quote,
+  });
+
+  return {
+    id, 
+    name: quoteObj.name,
     quote: quoteObj.quote
   }
 })
+
+
+
+app.get('/tests/result/:id', async (req, res) => {
+  const id = req.params.id;
+  const test = testMap.get(id);
+console.log(id)
+
+  if (test) {
+    try {
+      const result = await test.testResult();
+
+      res.send({ result });
+    } catch (error) {
+      res.status(500).send('Test Failed');
+    }
+  } else {
+    res.status(404).send('Test Not Found');
+  }
+});
 
 function generateRandomID() {
   return crypto.randomUUID();
